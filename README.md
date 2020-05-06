@@ -27,7 +27,7 @@ yarn add element-form-create
 import Vue from 'vue'
 import App from './App.vue'
 import ElementUI from 'element-ui'
-import FormCreate from './template'
+import FormCreate from 'element-form-create'
 
 
 import 'element-ui/lib/theme-chalk/index.css'
@@ -51,7 +51,7 @@ Vue.use(FormCreate, {
 
 	// 组件属性
 	showDefaultPlaceholder: true,
-	renameProps: { class: 'staticClass', name: 'prop' },
+	renameProps: { class: 'staticClass' },
 	defaultPlaceholderNode: ['el-input', 'el-autocomplete', 'el-select', 'el-cascader', 'el-time-select', 'el-time-picker', 'el-date-picker']
 })
 
@@ -86,6 +86,7 @@ new Vue({
 					  validate: { required: true }
 					},
 					{ node: 'el-select', label: '性别', name: 'gender',
+						// 集成表单验证
 					  validate: { required: true, type: 'number', trigger: 'change' },
 					  children: [
 					  	{ node: 'el-option', props: { label: '男', value: 1 } },
@@ -96,7 +97,8 @@ new Vue({
 					  validate: { required: true, trigger: 'change' },
 					  props: { type: 'date', valueFormat: 'yyyy-MM-dd' }
 					},
-					{ node: 'el-radio-group', label: '是否已婚', name: 'isMarried'
+					{ node: 'el-radio-group', label: '是否已婚', name: 'isMarried',
+						// 可通过form获取表单项的其他值，实现表单联动
 					  isShow: ({ form }) => form.gender === 2,
 					  validate: { trigger: 'change' },
 					  children: () => {
@@ -104,7 +106,9 @@ new Vue({
 					  		{ label: '是', value: 1 },
 					  		{ label: '否', value: 0 }
 					  	]
-					  	return list.map((i) => <el-radio :label="i.value">{ i.label }</el-option>)
+
+					  	// 支持jsx语法
+					  	return list.map((i) => <el-radio label={ i.value }>{ i.label }</el-option>)
 					  }
 					}
 				]
