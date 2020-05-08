@@ -8,10 +8,10 @@ function renderRules(self, item) {
 
 
 	let rules    = [],
-			label    = item.label || '',
-			message  = item.message,
-			trigger  = item.trigger,
-			validate = item.validate
+			label    = defaultValue(item.label, { form: deepCopy(self.form, true), name: item.name }, ''),
+			message  = defaultValue(item.message, { form: deepCopy(self.form, true), name: item.name }, {}),
+			validate = defaultValue(item.validate, { form: deepCopy(self.form, true), name: item.name }, {}),
+			trigger  = item.validate.trigger || 'blur'
 
 
 	if( isBoolean(validate.required) ) {
@@ -87,11 +87,6 @@ function initOptions(self, item, opts) {
 	let option = item.itemOptions || {},
 			rename = (self.$ELEMENTJSONFORM || { class: 'staticClass' }).renameProps
 
-	item.label = defaultValue(item.label, { form: deepCopy(self.form, true), name: item.name }, '')
-	item.message = defaultValue(item.message, { form: deepCopy(self.form, true), name: item.name }, {})
-	item.validate = defaultValue(item.validate, { form: deepCopy(self.form, true), name: item.name }, {})
-
-	item.trigger = item.validate.trigger || 'blur'
 
 	// 添加表单项属性
 	;['key', 'ref', 'slot', 'class', 'style'].forEach((key) => {
@@ -103,24 +98,19 @@ function initOptions(self, item, opts) {
 	})
 
 	// 表单项特有属性
-	;['label', 'name'].forEach((key) => {
-
-		if( item[key] ) {
-
-			opts.attrs[ rename[key] || key ] = item[key]
-		}
-	})
+	opts.attrs.label = defaultValue(item.label, { form: deepCopy(self.form, true), name: item.name }, '')
 
 
-	// 当表单项的name存在时，才会生成表单验证的逻辑
 	if( item.name ) {
 
+		opts.attrs.prop = item.name
+
+		// 当表单项的name存在时，才会生成表单验证的逻辑
 		opts.attrs.rules = renderRules(self, item)
 	}
+	
 
-	item.itemProps = defaultValue(item.itemProps, { form: deepCopy(self.form, true), name: item.name }, {})
-
-	opts.attrs = { ...opts.attrs, ...item.itemProps }
+	opts.attrs = { ...opts.attrs, ...defaultValue(item.itemProps, { form: deepCopy(self.form, true), name: item.name }, {}) }
 }
 
 
@@ -138,21 +128,20 @@ function renderFormItem(h, item) {
 	// 嵌套表单
 	if( item.itemMultiple === true ) {
 
-		item.children.forEach((child) => next.push(renderFormItem.call(this, h, child)))
+		item.children.forEach((child) => next.push(renderFormItem.call(self, h, child)))
 	}
 
 	// 多子级
 	if( item.multiple === true ) {
 
-		item.children.forEach((child) => next.push(renderNode.call(this, h, child)))
+		item.children.forEach((child) => next.push(renderNode.call(self, h, child)))
 	}
 
 	// 单节点
 	if( !item.itemMultiple && !item.multiple ) {
 
-		next.push(renderNode.call(this, h, item))
+		next.push(renderNode.call(self, h, item))
 	}
-
 
 	return h(node, opts, next)
 }
@@ -160,11 +149,11 @@ function renderFormItem(h, item) {
 
 function renderItem(h, item) {
 
-	// 表单项是否展示
-	let show = defaultValue(item.isShow, { form: deepCopy(self.form, true), name: item.name }, true)
+	let self = this,
+			show = defaultValue(item.isShow, { form: deepCopy(self.form, true), name: item.name }, true)
 
-	// 不展示直接返回null
-	if( show === false ) return null
+	// 不展示直接返回空节点
+	if( show === false ) return h()
 
 
 	if( isVNode(item) ) return item
@@ -172,11 +161,11 @@ function renderItem(h, item) {
 
 	if( isFunction(item.itemRender) ) {
 
-		return item.itemRender(h, { form: this.form, name: item.name })
+		return item.itemRender(h, { form: self.form, name: item.name })
 	}
 
 
-	return renderFormItem.call(this, h, item)
+	return renderFormItem.call(self, h, item)
 }
 
 

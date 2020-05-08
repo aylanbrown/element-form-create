@@ -6,14 +6,7 @@
 
 	function recursiveFunction(form, data, list) {
 
-		let item = null,
-				init = {
-					string: '',
-					number: null,
-					boolean: false,
-					array: [],
-					object: {} 
-				}
+		let item = null
 
 		for( let i = 0, len = list.length; i < len; i++ ) {
 
@@ -21,7 +14,7 @@
 
 			if( isString(item.name) && item.name !== '' ) {
 
-				form[ item.name ] = item.value || data[ item.name ] || init[ (item.validate || {}).type ]
+				form[ item.name ] = item.value || data[ item.name ] || null
 			}
 
 			if( Array.isArray(item.children) && item.children.length > 0 ) {

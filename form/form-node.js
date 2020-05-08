@@ -118,7 +118,7 @@ function renderNode(h, item) {
 	// 子级为函数
 	if( isFunction(item.children) ) {
 
-		item.children = defaultValue(item.children, { form: deepCopy(self.form, true), name: item.name }, [])
+		next = defaultValue(item.children, { form: deepCopy(self.form, true), name: item.name }, []).map((child) => renderNode.call(this, h, child))
 	}
 
 	// 子级为数组
