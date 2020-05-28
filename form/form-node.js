@@ -12,8 +12,8 @@ const isElementComponent = (node) => isObject(node) && node.name && /^El[A-Za-z]
 function initOptions(self, item, opts) {
 
 	let rename = (self.$ELEMENTJSONFORM || { renameProps: { name: 'prop' } }).renameProps,
-			elNode = isElementNode(item.node) || isElementComponent(item.node) || ( (item.node || {}).props || {} ).hasOwnProperty('value')
-
+			elNode = isElementNode(item.node) || isElementComponent(item.node) || ( (item.node || {}).props || {} ).hasOwnProperty('value'),
+			$props = defaultValue(item.props, { form: deepCopy(self.form, true), name: item.name }, {})
 
 
 	// 添加表单节点属性
@@ -47,13 +47,12 @@ function initOptions(self, item, opts) {
 	// 加载占位文本
 	if( self.$ELEMENTJSONFORM.showDefaultPlaceholder ) {
 
-		initPlaceholder(item.node, opts.attrs, item.label, item.trigger, self.$ELEMENTJSONFORM.defaultPlaceholderNode || [])
+		initPlaceholder(item.node, opts.attrs, item.label, (item.validate || { trigger: 'blur' }).trigger, self.$ELEMENTJSONFORM.defaultPlaceholderNode || [])
 	}
 
-	item.props = defaultValue(item.props, { form: deepCopy(self.form, true), name: item.name }, {})
 
 	// 合并自定义属性
-	opts.attrs = { ...opts.attrs, ...item.props }
+	opts.attrs = { ...opts.attrs, ...$props }
 
 
   // 重写组件方法并赋值
