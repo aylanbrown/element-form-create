@@ -11,7 +11,7 @@ function renderRules(self, item) {
 			label    = defaultValue(item.label, { form: deepCopy(self.form, true), name: item.name }, ''),
 			message  = defaultValue(item.message, { form: deepCopy(self.form, true), name: item.name }, {}),
 			validate = defaultValue(item.validate, { form: deepCopy(self.form, true), name: item.name }, {}),
-			trigger  = item.validate.trigger || 'blur'
+			trigger  = validate.trigger || 'blur'
 
 
 	if( isBoolean(validate.required) ) {
@@ -85,11 +85,11 @@ function renderRules(self, item) {
 function initOptions(self, item, opts) {
 
 	let option = item.itemOptions || {},
-			rename = (self.$ELEMENTJSONFORM || { class: 'staticClass' }).renameProps
+			rename = ({ ...{ renameProps: { name: 'prop', scope: 'scopedSlots' }}, ...self.$ELEMENTJSONFORM }).renameProps
 
 
 	// 添加表单项属性
-	;['key', 'ref', 'slot', 'class', 'style'].forEach((key) => {
+	;['key', 'ref', 'slot', 'class', 'scope', 'style'].forEach((key) => {
 
 		if( option[key] ) {
 
@@ -119,7 +119,7 @@ function renderFormItem(h, item) {
 	let next = [],
 			self = this,
 			opts = { attrs: {} },
-			node = (self.$ELEMENTJSONFORM || { formItem: 'el-form-item' }).formItem
+			node = ({ ...{ formItem: 'el-form-item' }, ...self.$ELEMENTJSONFORM }).formItem
 
 
 	// 添加组件的自定义属性

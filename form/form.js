@@ -16,9 +16,9 @@ function initOptions(self, opts) {
 	opts.attrs = Object.assign({
 		model: self.form,
 		inline: mode === 'search',
-		size: (self.$ELEMENTJSONFORM || { size: 'small' }).size,
-		labelSuffix: (self.$ELEMENTJSONFORM || { labelSuffix: ':' }).labelSuffix,
-		labelWidth: mode === 'search' ? '' : (self.$ELEMENTJSONFORM || { labelWidth: '100px' }).labelWidth
+		size: ({ ...{ size: 'small' }, ...self.$ELEMENTJSONFORM }).size,
+		labelSuffix: ({ ...{ labelSuffix: '：' }, ...self.$ELEMENTJSONFORM }).labelSuffix,
+		labelWidth: mode === 'search' ? '' : ({ ...{ labelWidth: '100px' }, ...self.$ELEMENTJSONFORM }).labelWidth
 	}, options)
 
 	
@@ -35,8 +35,8 @@ function renderForm(h) {
 
 	let self = this,
 			mode = self.mode,
-			node = (self.$ELEMENTJSONFORM || { form: 'el-form' }).form,
-			full = (self.$ELEMENTJSONFORM || { fullWidth: true }).fullWidth,
+			node = ({ ...{ form: 'el-form' }, ...self.$ELEMENTJSONFORM }).form,
+			full = ({ ...{ fullWidth: true }, ...self.$ELEMENTJSONFORM }).fullWidth,
 			next = (self.schema || []).map((item) => renderItem.call(this, h, item)),
 			opts = {
 				ref: 'form',

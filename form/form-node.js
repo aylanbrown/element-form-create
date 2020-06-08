@@ -11,13 +11,12 @@ const isElementComponent = (node) => isObject(node) && node.name && /^El[A-Za-z]
 
 function initOptions(self, item, opts) {
 
-	let rename = (self.$ELEMENTJSONFORM || { renameProps: { name: 'prop' } }).renameProps,
-			elNode = isElementNode(item.node) || isElementComponent(item.node) || ( (item.node || {}).props || {} ).hasOwnProperty('value'),
+	let rename = ({ ...{ renameProps: { name: 'prop', scope: 'scopedSlots' }}, ...(self.$ELEMENTJSONFORM || {}) }).renameProps,
 			$props = defaultValue(item.props, { form: deepCopy(self.form, true), name: item.name }, {})
 
 
 	// 添加表单节点属性
-	;['key', 'ref', 'slot', 'class', 'style'].forEach((key) => {
+	;['key', 'ref', 'slot', 'scope', 'class', 'style'].forEach((key) => {
 
 		if( item[key] ) {
 
@@ -27,7 +26,7 @@ function initOptions(self, item, opts) {
 
 
 	// 给组件添加双向数据绑定
-	if( elNode && item.name && item.multiple !== true ) {
+	if( item.name && item.multiple !== true ) {
 
 		opts.model = {
 
@@ -47,7 +46,7 @@ function initOptions(self, item, opts) {
 	// 加载占位文本
 	if( self.$ELEMENTJSONFORM.showDefaultPlaceholder ) {
 
-		initPlaceholder(item.node, opts.attrs, item.label, (item.validate || { trigger: 'blur' }).trigger, self.$ELEMENTJSONFORM.defaultPlaceholderNode || [])
+		initPlaceholder(item.node, opts.attrs, item.label, ({ ...{ trigger: 'blur' }, ...item.validate }).trigger, self.$ELEMENTJSONFORM.defaultPlaceholderNode || [])
 	}
 
 
