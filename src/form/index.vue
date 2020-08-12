@@ -1,52 +1,24 @@
 <script>
 
+
+	import is from '../utils/is'
 	import renderForm from './form'
-	import { isObject, isString, isFunction, deepCopy } from './utils'
+	import deepCopy from '../utils/copy'
+	import recursive from '../utils/recursive'
 
-
-	function recursiveFunction(form, data, list) {
-
-		let item = null
-
-		for( let i = 0, len = list.length; i < len; i++ ) {
-
-			item = list[i]
-
-			if( isString(item.name) && item.name !== '' ) {
-
-				form[ item.name ] = item.value || data[ item.name ] || null
-			}
-
-			if( Array.isArray(item.children) && item.children.length > 0 ) {
-
-				recursiveFunction(form, data, item.children)
-			}
-		}
-	}
-	
-
-	function renderSchema() {
-
-		let form = {},
-				list = this.schema,	
-				data = deepCopy(this.value)
-
-		recursiveFunction(form, data, list)
-
-		form = { ...data, ...form }
-
-		this.form = form
-		this.$emit('input', form)
-	}
 
 	export default {
 
 		name: 'FormCreate',
+
+		version: process.env.VERSION,
+
 		data() {
 
 			return {
 
-				form: {}
+				form: {},
+				copy: {}
 			}
 		},
 
@@ -56,14 +28,14 @@
 				type: Object,
 				default: () => ({})
 			},
-			schema: {
-				type: Array,
-				default: () => []
-			},
 			mode: {
 				type: String,
 				default: 'submit',
-				validator: (mode) => ['submit', 'search', 'preview'].indexOf(mode) !== -1
+				validator: (type) => ['submit', 'search', 'preview'].indexOf(type) > -1
+			},
+			schema: {
+				type: Array,
+				default: () => []
 			},
 			options: {
 				type: Object,
@@ -77,7 +49,7 @@
 				type: Boolean,
 				default: false
 			},
-			fullWidth: {
+			showIcon: {
 				type: Boolean,
 				default: true
 			},
@@ -110,34 +82,57 @@
 				default: 'el-icon-search'
 			}
 		},
+
 		created() {
 
-			renderSchema.call(this)
+			let form = {},
+					value = this.value,
+					schema = this.schema
+
+			recursive(form, schema)
+
+			this.copy = deepCopy(value)
+			this.form = Object.assign(form, value)
+
+			this.$emit('input', this.form)
 		},
+
 		watch: {
 
 			'schema': {
 
 				handler: function() {
 
-					renderSchema.call(this)
+					let form = {},
+							schema = this.schema
+
+					recursive(form, schema)
+
+					this.form = Object.assign(form, this.copy)
+
+					this.$emit('input', this.form)
 				},
 				deep: true
 			}
 		},
+
 		methods: {
+
+			ref(str) {
+
+				return this.$refs[ str ]
+			},
 
 			submit(cb) {
 
-				let form     = deepCopy(this.form),
+				let form = deepCopy(this.form),
 						validate = this.$refs.form.validate
 
 				// 如果有回调则执行回调函数
-				if( isFunction(cb) ) {
+				if( is.function(cb) ) {
 
 					return validate((valid) => valid ? cb(form) : false)
 				}
-
 
 				// 无回调执行Promise
 				return new Promise((resolve, reject) => validate((valid, error) => valid ? resolve(form) : reject(error)))
@@ -150,39 +145,39 @@
 
 			get(key) {
 
-				let form  = this.form,
-						value = {}
+				let form = this.form,
+						data = {}
 
-				if( isString(key) ) {
+				if( is.string(key) ) {
 
-					value[ key ] = form[ key ]
+					data[ key ] = form[ key ]
 				}
 
-				if( Array.isArray(key) ) {
+				if( is.array(key) ) {
 
-					key.forEach(i => value[i] = form[i])
+					key.forEach(i => data[i] = form[i])
 				}
 
-				return value
+				return data
 			},
 
 			set(keys, value) {
 
 				let form = deepCopy(this.form)
 
-				if( isString(keys) ) {
+				if( is.string(keys) ) {
 
 					form[ keys ] = value
 				}
 
 
-				if( Array.isArray(keys) ) {
+				if( is.array(keys) ) {
 
 					keys.forEach(item => form[ item.key ] = item.value)
 				}
 
 
-				if( isObject(keys) ) {
+				if( is.object(keys) ) {
 
 					Object.keys(keys).forEach(item => form[ item ] = keys[ item ])
 				}
@@ -190,24 +185,19 @@
 
 				this.form = form
 				this.$emit('input', form)
-			},
-
-			ref(str) {
-
-				return this.$refs[ str ]
 			}
 		},
+
 		render(h) {
 
-			return renderForm.call(this, h)
+			return renderForm(h, this)
 		}
 	}
 </script>
 <style>
-	.form-create-full .el-form-item .el-select,
-	.form-create-full .el-form-item .el-cascader,
-	.form-create-full .el-form-item .el-date-editor,
-	.form-create-full .el-form-item .el-autocomplete {
+	.form-create.form-full-width .el-select,
+	.form-create.form-full-width .el-cascader,
+	.form-create.form-full-width .el-date-editor {
 		width: 100%;
 	}
 </style>

@@ -39,8 +39,8 @@ Vue.use(ElementUI)
 Vue.use(FormCreate, {
 	// 表单节点
 	form: 'el-form',
+	button: 'el-button',
 	formItem: 'el-form-item',
-	formButton: 'el-button',
 
 	// 表单外观
 	size: 'small',
@@ -50,8 +50,9 @@ Vue.use(FormCreate, {
 
 
 	// 组件属性
+	renameProps: {},
 	showDefaultPlaceholder: true,
-	defaultPlaceholderNode: ['el-input', 'el-autocomplete', 'el-select', 'el-cascader', 'el-time-select', 'el-time-picker', 'el-date-picker']
+	showPlaceholderNode: ['el-input', 'el-autocomplete', 'el-select', 'el-cascader', 'el-time-select', 'el-time-picker', 'el-date-picker']
 })
 
 
@@ -98,7 +99,7 @@ new Vue({
 					},
 					{ node: 'el-radio-group', label: '是否已婚', name: 'isMarried',
 						// 可通过form获取表单项的其他值，实现表单联动
-					  isShow: ({ form }) => form.gender === 2,
+					  show: ({ form }) => form.gender === 2,
 					  validate: { trigger: 'change' },
 					  children: () => {
 					  	let list = [
@@ -121,8 +122,3 @@ new Vue({
 	}
 </script>
 ```
-
-
-使用教程：
-
-[点击此处](https://github.com/aylanbrown/element-form-create/wiki)
