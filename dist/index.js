@@ -548,7 +548,7 @@ var is = {
     return is.fit(data, 'object') && is.fit(data.tag, 'string');
   },
   valid: function valid(data) {
-    return !(data === '' || isNaN(data) || data === null || data === undefined);
+    return data !== '' || !isNaN(data) || data !== null || data !== undefined;
   },
   string: function string(data) {
     return Object.prototype.toString.call(data) === '[object String]';

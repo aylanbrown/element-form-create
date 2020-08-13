@@ -34,7 +34,7 @@ const is = {
 
 	vNode: (data) => is.fit(data, 'object') && is.fit(data.tag, 'string'),
 
-	valid: (data) => !(data === '' || isNaN(data) || data === null || data === undefined),
+	valid: (data) => data !== '' || !isNaN(data) || data !== null || data !== undefined,
 
 	string: (data) => Object.prototype.toString.call(data) === '[object String]',
 
