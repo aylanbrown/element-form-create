@@ -966,7 +966,7 @@ function formItemChildren(h, self, item, label, validate) {
     // 由于Vue.js的createElement(node, options, children)对children的要求是null | array
     // 为了防止非null时出现数据叠加的情况，因此将children直接声明长度为1的数组
     // 声明VNode节点则进入下一个流程
-    if (utils_is.valid(item.node) || utils_is.function(item.render)) {
+    if (item.node || utils_is.function(item.render)) {
       next = [form_node(h, self, item, label, validate)];
     } else {
       // 未声明VNode节点时，按照form -> children -> value的顺序尝试对节点填充内容

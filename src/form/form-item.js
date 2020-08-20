@@ -123,7 +123,7 @@ function formItemChildren(h, self, item, label, validate) {
 		// 为了防止非null时出现数据叠加的情况，因此将children直接声明长度为1的数组
 
 		// 声明VNode节点则进入下一个流程
-		if( is.valid(item.node) || is.function(item.render) ) {
+		if( item.node || is.function(item.render) ) {
 
 			next = [ renderNode(h, self, item, label, validate) ]
 
