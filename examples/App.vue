@@ -7,11 +7,11 @@
 			</div>
 			
 		</div>
-		<form-create v-model="form" :schema="schema">
+		<form-create v-model="form" :schema="schema" @submit="handleSubmit">
 			<el-form-item label="插槽">
 				{{ form }}
 			</el-form-item>
-			<el-button type="success" slot="button">测试</el-button>
+			<el-button type="success" slot="button">按钮插槽</el-button>
 		</form-create>
 	</div>
 </template>
@@ -33,9 +33,10 @@
 					{ node: 'el-input', label: '姓名', name: 'name', itemOptions: () => ({ class: 'form-item-name' }),
 						props: { maxlength: 20, showWordLimit: true },
 						validate: { required: true, min: 2, max: 20 },
+						message: { range: '请输入长度为2-20字的姓名' },
 						methods: {
 
-							change: (e) => console.log(e)
+							change: (e) => console.log('name is change', e)
 						}
 					},
 					{ node: 'el-select', label: '性别', name: 'gender', validate: { trigger: 'change' }, children: [
@@ -52,9 +53,7 @@
 						]
 					},
 
-					{ node: 'el-input', label: '工作年限', name: 'experience', children: ({ h }) => <template slot="append">年</template> //
-						// { node: 'template', slot: 'append', children: '年' }
-					 },
+					{ node: 'el-input', label: '工作年限', name: 'experience', children: ({ h }) => <template slot="append">年</template> }, //
 
 					{ itemMultiple: true, label: '公司经历', children: [
 
@@ -72,13 +71,6 @@
 							{ node: 'el-date-picker', label: '时间', name: 'start_time', validate: { trigger: 'change' } }
 						] }
 					] },
-					// { multiple: true, label: '岗位', name: 'job', children: [
-
-					// 	{ node: 'el-input', label: '部门', name: 'department' },
-					// 	{ node: 'el-input', label: '职位', name: 'job' },
-					// 	{ node: 'el-date-picker', label: '入职时间', name: 'join_time', validate: { trigger: 'change' } }
-					// ] },
-					// { node: 'el-radio-group', label: () => this.change === 1 ? '男' : '女', name: 'gender' },
 					{ label: '录入平台', children: 'OA管理系统' },
 					<el-form-item label="录入日期">{ () => this.today }</el-form-item>, //
 				]
@@ -92,6 +84,16 @@
 				let date = new Date()
 
 				return `${ date.getFullYear() }-${ date.getMonth() + 1 }-${ date.getDate() }`
+			}
+		},
+
+		methods: {
+
+			handleSubmit(form) {
+
+				console.log(form)
+
+				alert(`已触发表单提交事件`)
 			}
 		}
 	}

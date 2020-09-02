@@ -21,10 +21,22 @@ function renderRules(self, name = null, label, validate, message) {
 	// 因此当min和max同时存在时，直接合并两者
 	if( is.number(validate.min) && is.number(validate.max) ) {
 
-		validate.range = [validate.min, validate.max]
+		validate.range = { min: validate.min, max: validate.max }
 
 		delete validate.min
 		delete validate.max
+	}
+
+	// 可枚举属性
+	if( is.array(validate.enum) && validate.enum.length > 0 ) {
+
+		validate.enum = { type: 'enum', enum: validate.enum }
+	}
+
+	// 额外测试字段是否只有空格
+	if( is.boolean(validate.whitespace) ) {
+
+		validate.whitespace = { type: 'string', whitespace: true }
 	}
 
 
@@ -36,13 +48,25 @@ function renderRules(self, name = null, label, validate, message) {
 
 		if( ['trigger', 'validator'].indexOf(key) === -1 ) {
 
-			rules.push({
+			let rule = {
 
-				trigger, [key]: validate[key],
+				trigger,
 
 				// 优先使用message内的错误提示语，其次使用默认
 				message: message[key] || `请${ trigger === 'blur' ? '输入' : '选择' }${ label }`
-			})
+			}
+
+			// 如对应字段为对象则直接合并
+			if( is.object(validate[key]) ) {
+
+				rule = { ...rule, ...validate[key] }
+
+			} else {
+
+				rule[ key ] = validate[ key ]
+			}
+
+			rules.push(rule)
 		}
 	})
 
@@ -91,7 +115,17 @@ function formItemOptions(self, item, label, validate, message) {
 	if( is.string(item.name) && is.valid(item.name) ) {
 
 		attrs.prop = item.name
-		attrs.rules = renderRules(self, item.name, label, validate, message)
+
+		// 提供切换使用组件自带的async-validator的字段
+		if( item.useOriginalValidate !== false ) {
+
+			attrs.rules = renderRules(self, item.name, label, validate, message)
+
+		} else {
+
+			attrs.rules = validate
+		}
+		
 	}
 
 	// 合并属性

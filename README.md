@@ -1,8 +1,8 @@
 
 
-# Element-Form-Create
+# element-form-create
 
-Element-Form-Create是以Vue.js + ElementUI开发的动态表单组件，可以兼容大部分ElementUI的表单组件；同时支持局部引入组件、表单联动、嵌套表单、表单验证等功能。
+element-form-create是基于Vue.js开发的动态表单组件，兼容`element-ui`、`iview`和`ant-design-vue`（仅支持`form-model`）的组件和遵循双向数据绑定规范的自定义组件，默认使用`element-ui`；另外还支持局部引入组件、表单联动、嵌套表单、表单验证等功能。
 
 
 ### 环境要求

@@ -14,12 +14,15 @@ function submitButton(h, self) {
 				attrs: {
 
 					type: 'primary',
+					nativeType: 'submit',
 					loading: self.loading,
 					disabled: self.disabled
 				},
 				on: {
 
-					click: () => {
+					click: (e) => {
+
+						e.preventDefault()
 
 						self.$refs.form.validate((valid) => {
 
@@ -52,13 +55,16 @@ function resetButton(h, self) {
 				attrs: {
 
 					type: 'default',
+					nativeType: 'reset',
 					icon: self.resetIcon,
 					loading: self.loading,
 					disabled: self.disabled
 				},
 				on: {
 
-					click: () => {
+					click: (e) => {
+
+						e.preventDefault()
 
 						self.$refs.form.resetFields()
 

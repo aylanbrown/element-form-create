@@ -610,11 +610,13 @@ function submitButton(h, self) {
       options = {
     attrs: {
       type: 'primary',
+      nativeType: 'submit',
       loading: self.loading,
       disabled: self.disabled
     },
     on: {
-      click: function click() {
+      click: function click(e) {
+        e.preventDefault();
         self.$refs.form.validate(function (valid) {
           if (valid) {
             var form = utils_copy(self.form);
@@ -637,12 +639,14 @@ function resetButton(h, self) {
       options = {
     attrs: {
       type: 'default',
+      nativeType: 'reset',
       icon: self.resetIcon,
       loading: self.loading,
       disabled: self.disabled
     },
     on: {
-      click: function click() {
+      click: function click(e) {
+        e.preventDefault();
         self.$refs.form.resetFields();
         self.$emit('reset');
       }
@@ -887,9 +891,28 @@ function renderRules(self) {
   // 因此当min和max同时存在时，直接合并两者
 
   if (utils_is.number(validate.min) && utils_is.number(validate.max)) {
-    validate.range = [validate.min, validate.max];
+    validate.range = {
+      min: validate.min,
+      max: validate.max
+    };
     delete validate.min;
     delete validate.max;
+  } // 可枚举属性
+
+
+  if (utils_is.array(validate.enum) && validate.enum.length > 0) {
+    validate.enum = {
+      type: 'enum',
+      enum: validate.enum
+    };
+  } // 额外测试字段是否只有空格
+
+
+  if (utils_is.boolean(validate.whitespace)) {
+    validate.whitespace = {
+      type: 'string',
+      whitespace: true
+    };
   } // 遍历validate中的属性以生成对应的验证规则
 
 
@@ -897,11 +920,19 @@ function renderRules(self) {
     // trigger为触发时机，不存在单独的验证规则
     // 由于validator本身为函数，同时涉及到表单联动机制，需要单独配置
     if (['trigger', 'validator'].indexOf(key) === -1) {
-      var _rules$push;
+      var rule = {
+        trigger: trigger,
+        // 优先使用message内的错误提示语，其次使用默认
+        message: message[key] || "\u8BF7".concat(trigger === 'blur' ? '输入' : '选择').concat(label)
+      }; // 如对应字段为对象则直接合并
 
-      rules.push((_rules$push = {
-        trigger: trigger
-      }, form_item_defineProperty(_rules$push, key, validate[key]), form_item_defineProperty(_rules$push, "message", message[key] || "\u8BF7".concat(trigger === 'blur' ? '输入' : '选择').concat(label)), _rules$push));
+      if (utils_is.object(validate[key])) {
+        rule = form_item_objectSpread(form_item_objectSpread({}, rule), validate[key]);
+      } else {
+        rule[key] = validate[key];
+      }
+
+      rules.push(rule);
     }
   }); // 对validator的参数进行改写，使其可以额外获取到form集合
 
@@ -943,8 +974,13 @@ function formItemOptions(self, item, label, validate, message) {
 
 
   if (utils_is.string(item.name) && utils_is.valid(item.name)) {
-    attrs.prop = item.name;
-    attrs.rules = renderRules(self, item.name, label, validate, message);
+    attrs.prop = item.name; // 提供切换使用组件自带的async-validator的字段
+
+    if (item.useOriginalValidate !== false) {
+      attrs.rules = renderRules(self, item.name, label, validate, message);
+    } else {
+      attrs.rules = validate;
+    }
   } // 合并属性
 
 
@@ -1123,7 +1159,7 @@ function recursive(form, schema) {
 
 /* harmony default export */ var formvue_type_script_lang_js_ = ({
   name: 'FormCreate',
-  version: "0.2.0",
+  version: "0.2.3",
   data: function data() {
     return {
       form: {},
