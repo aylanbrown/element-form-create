@@ -17,8 +17,7 @@
 
 			return {
 
-				form: {},
-				copy: {}
+				form: {}
 			}
 		},
 
@@ -86,13 +85,11 @@
 		created() {
 
 			let form = {},
-					value = this.value,
 					schema = this.schema
 
 			recursive(form, schema)
 
-			this.copy = deepCopy(value)
-			this.form = Object.assign(form, value)
+			this.form = deepCopy(Object.assign(form, this.value))
 
 			this.$emit('input', this.form)
 		},
@@ -108,7 +105,7 @@
 
 					recursive(form, schema)
 
-					this.form = Object.assign(form, this.copy)
+					this.form = deepCopy(Object.assign(form, this.value))
 
 					this.$emit('input', this.form)
 				},
