@@ -11,7 +11,7 @@ function recursive(form, schema) {
 
 		if( is.string(item.name) ) {
 
-			form[ item.name ] = item.value || null
+			form[ item.name ] = item.value !== undefined ? item.value : null
 		}
 
 		if( is.array(item.children) )  {
