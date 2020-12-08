@@ -94,25 +94,6 @@
 			this.$emit('input', this.form)
 		},
 
-		watch: {
-
-			'schema': {
-
-				handler: function() {
-
-					let form = {},
-							schema = this.schema
-
-					recursive(form, schema)
-
-					this.form = deepCopy(Object.assign(form, this.value))
-
-					this.$emit('input', this.form)
-				},
-				deep: true
-			}
-		},
-
 		methods: {
 
 			ref(str) {
@@ -182,6 +163,17 @@
 
 				this.form = form
 				this.$emit('input', form)
+			},
+
+			setSchema(schema) {
+
+				let form = {}
+
+				recursive(form, schema)
+
+				this.form = deepCopy(Object.assign(form, this.value))
+
+				this.$emit('input', this.form)
 			}
 		},
 

@@ -2,6 +2,7 @@
 
 
 import is from '../utils/is'
+import deepCopy from './copy'
 
 
 
@@ -11,7 +12,7 @@ function recursive(form, schema) {
 
 		if( is.string(item.name) ) {
 
-			form[ item.name ] = item.value !== undefined ? item.value : null
+			form[ item.name ] = (is.array(item.value) || is.object(item.value)) ? deepCopy(item.value) : ( item.value !== undefined ? item.value : null )
 		}
 
 		if( is.array(item.children) )  {

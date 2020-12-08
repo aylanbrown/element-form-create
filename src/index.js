@@ -25,7 +25,7 @@ Form.install = function(Vue, options = {}) {
 
 
 		// 组件属性
-		renameProps: { ...options.renameProps, ...renameProps },
+		renameProps: { ...renameProps, ...options.renameProps },
 		showDefaultPlaceholder: options.showDefaultPlaceholder !== false,
 		showPlaceholderNode: options.showPlaceholderNode || showPlaceholderNode
 	}
