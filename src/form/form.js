@@ -52,7 +52,7 @@ function formOptions(self) {
 function formChildren(h, self) {
 
 
-	let list = [], schema = self.schema, slots = self.$slots.default || []
+	let list = [], schema = self.list, slots = self.$slots.default || []
 
 	// 遍历表单项以生成表单结构
 	schema.forEach((item) => {

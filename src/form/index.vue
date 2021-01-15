@@ -17,7 +17,8 @@
 
 			return {
 
-				form: {}
+				form: {},
+				list: this.schema
 			}
 		},
 
@@ -171,6 +172,7 @@
 
 				recursive(form, schema)
 
+				this.list = schema
 				this.form = deepCopy(Object.assign(form, this.value))
 
 				this.$emit('input', this.form)

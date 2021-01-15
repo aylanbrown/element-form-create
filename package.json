@@ -1,11 +1,11 @@
 {
   "name": "element-form-create",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "description": "Element-Form-Create是以Vue.js + ElementUI开发的动态表单组件，可以兼容大部分ElementUI的表单组件；同时支持局部引入组件、表单联动、嵌套表单、表单验证等功能",
   "main": "dist/index.js",
   "scripts": {
     "dev": "webpack-dev-server --config=./config/webpack.dev.conf.js",
-    "build": "rimraf dist && cross-env VERSION=0.2.5 webpack --config=./config/webpack.prod.conf.js"
+    "build": "rimraf dist && cross-env VERSION=0.2.6 webpack --config=./config/webpack.prod.conf.js"
   },
   "repository": {
     "type": "git",
